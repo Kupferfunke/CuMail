@@ -1,0 +1,5 @@
+/* Phase 0 uses German source keys. Export localisation from Xcode before adding a locale. */
+"Neue Nachricht" = "Neue Nachricht";
+"Einstellungen" = "Einstellungen";
+"Alle Posteingänge" = "Alle Posteingänge";
+"Demomails durchsuchen" = "Demomails durchsuchen";

@@ -1,0 +1,6 @@
+*.pdf binary
+*.png binary
+*.icns binary
+*.ttf binary
+# Preserve original OFL notices byte-for-byte, including their original line endings.
+App/Resources/Fonts/*-OFL.txt -text -whitespace
