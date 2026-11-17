@@ -1,0 +1,52 @@
+CuMail Personal Use License 1.0
+Copyright (c) 2026 KupferFunke. All rights reserved except as granted below.
+
+1. Scope
+This license applies to the original CuMail code and documentation in this
+repository (the Software). Separately identified third-party components,
+including bundled libraries, fonts and their documentation, remain governed
+by their own licenses. This license does not restrict rights granted by those
+third-party licenses.
+
+2. Free personal use
+Permission is granted, without a license fee, to natural persons to download,
+inspect, copy, build, run and modify the Software solely for their own private,
+noncommercial purposes. Personal study, experimentation and hobby projects
+are included when they do not serve a business or professional activity.
+
+3. Sharing and forks
+You may publish forks and redistribute original or modified copies without
+charge for the personal uses permitted above. Retain this license, copyright
+notices and third-party notices. Clearly identify your modifications and do
+not claim that a modified version is an official KupferFunke release. Each
+recipient receives rights directly under this license; no broader license
+may be offered for the original CuMail portions.
+
+4. Uses requiring separate permission
+Commercial, professional or organizational use requires prior written
+permission from KupferFunke. This includes business mail processing,
+work performed for an employer or client, sale of the Software, paid hosting,
+commercial integration and use to provide a paid or revenue-generating service.
+Public availability of the source does not grant these permissions.
+
+5. Branding
+The bundled CuMail and KupferFunke marks may be retained as part of an
+unmodified copy. No right is granted to use these marks to endorse or promote
+another product or to imply affiliation. All other trademark rights are reserved.
+
+6. No warranty; limitation of liability
+To the fullest extent permitted by applicable law, the Software is provided
+"as is", without warranties of any kind, including merchantability, fitness
+for a particular purpose and noninfringement. To that same extent, the authors
+and rights holders are not liable for claims, damages or other liability
+arising from the Software or its use. Nothing here excludes liability or
+rights that applicable law does not permit to be excluded.
+
+7. Compliance and reserved rights
+Permissions under this license apply only while its conditions are met.
+Rights that applicable law grants independently of this license remain
+unaffected. All rights not expressly granted are reserved.
+
+For permission outside these terms, contact the repository owner through
+the public GitHub profile at https://github.com/Kupferfunke . Do not send
+passwords, tokens or private mail content in a public issue.
