@@ -1,0 +1,51 @@
+name: Publish verified CuMail 0.26.0 sources
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    if: github.repository == 'Kupferfunke/CuMail' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - name: Verify and import sanitized source archive
+        shell: bash
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path, PurePosixPath
+          import hashlib, stat, subprocess, zipfile
+          base = '5356d0b1f38411dd2baabfa809dc3311775dc8c8'
+          subprocess.run(['git', 'merge-base', '--is-ancestor', base, 'HEAD'], check=True)
+          tree = subprocess.check_output(['git', 'rev-parse', base + '^{tree}']).decode().strip()
+          assert tree == '9a3c8deccd366e75f4158915ac46eadf30da5c19', 'Unexpected base tree'
+          changes = set(subprocess.check_output(['git', 'diff', '--name-only', base, 'HEAD']).decode().splitlines())
+          assert changes <= {'CuMail-source.zip', '.github/workflows/publish-026.yml'}, 'New changes need review'
+          archive = Path('CuMail-source.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'e8d01a47af3f2cd8a56a4807de7e244ca8c811f4336c2bc65e33b285714a2582'
+          with zipfile.ZipFile(archive) as bundle:
+              entries = bundle.infolist()
+              assert len(entries) == 462
+              assert len({item.filename for item in entries}) == 462
+              for item in entries:
+                  path = PurePosixPath(item.filename)
+                  mode = item.external_attr >> 16
+                  assert not path.is_absolute() and '..' not in path.parts
+                  assert path.parts and path.parts[0] not in {'.git', '.github'}
+                  assert not item.is_dir() and not stat.S_ISLNK(mode)
+              for item in entries:
+                  target = Path(item.filename)
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  target.write_bytes(bundle.read(item))
+                  target.chmod(0o755 if (item.external_attr >> 16) & 0o111 else 0o644)
+          archive.unlink()
+          PYTHON
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'Publish CuMail 0.26.0: recipient and spelling improvements'
+          git push origin HEAD:main
