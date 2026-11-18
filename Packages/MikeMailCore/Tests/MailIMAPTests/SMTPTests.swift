@@ -33,6 +33,27 @@ private final class SMTPFixture {
 
 @Suite(.serialized, .timeLimit(.minutes(2)))
 struct SMTPTests {
+    @Test func completedRecipientsAndOldTrailingSeparatorsReachOnlyValidSMTPEnvelopes() async throws {
+        let fixture = try SMTPFixture(mode: "accept"); defer { fixture.close() }
+        let settings = try profile(port: fixture.port)
+        let server = SMTPServer(host: "localhost", port: fixture.port, transportSecurity: .implicitTLS,
+            certificateVerificationPolicy: .noVerification, minimumTLSVersion: .tlsv12)
+        let adapter = SwiftMailSubmission(profile: settings, password: "public-test-password", server: server)
+        try await adapter.connect()
+        var message = draft(settings)
+        message.to = "to@example.invalid; second@example.invalid, "
+        message.cc = "cc@example.invalid; "; message.bcc = "bcc@example.invalid, "
+        let prepared = try await adapter.prepare(message, attachments: [])
+        #expect(prepared.recipients == ["to@example.invalid", "second@example.invalid", "cc@example.invalid", "bcc@example.invalid"])
+        #expect(!prepared.rawMessage.contains("Bcc:"))
+        let toHeader = try #require(prepared.rawMessage.components(separatedBy: .newlines).first { $0.hasPrefix("To:") })
+        #expect(!toHeader.contains(";") && toHeader.contains("to@example.invalid") && toHeader.contains("second@example.invalid"))
+        try await adapter.submit(prepared)
+        for address in prepared.recipients { #expect(fixture.commands.contains("RCPT TO:<\(address)>")) }
+        #expect(!fixture.commands.contains("RCPT TO:<>"))
+        #expect(fixture.message == prepared.rawMessage)
+        await adapter.disconnect()
+    }
     private func profile(port: Int, security: IMAPSecurity = .implicitTLS) throws -> SMTPProfile {
         try SMTPProfile(accountID: AccountID(), host: "localhost", port: port, security: security, username: "sender@example.invalid", sentPolicy: .appendToFolder, sentFolder: "Sent")
     }

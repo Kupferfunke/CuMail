@@ -9,6 +9,8 @@ struct ComposerView: View {
     let closeAfterDiscard: () -> Void
     @Environment(\.colorScheme) private var scheme
     @AppStorage("appearance") private var appearance = AppAppearance.system.rawValue
+    @AppStorage(ComposerSpellingLanguage.preferenceKey) private var spellingLanguage = ComposerSpellingLanguage.automatic.rawValue
+    @AppStorage(ComposerSpellingLanguage.correctionKey) private var automaticCorrection = true
     @ViewState private var confirmingDiscard = false
     @ViewState private var quotationExpanded = true
     @ViewState private var quotationHeight: CGFloat = 220
@@ -47,7 +49,12 @@ struct ComposerView: View {
                 recipientRow("An", field: \.to, id: "compose-to")
                 recipientRow("Cc", field: \.cc, id: "compose-cc")
                 recipientRow("Bcc", field: \.bcc, id: "compose-bcc")
-                row("Betreff", field: \.subject, id: "compose-subject")
+                HStack {
+                    Text("Betreff").frame(width: 55, alignment: .leading).foregroundStyle(Brand.secondary(scheme))
+                    ComposerSubjectField(value: field(\.subject), enabled: !editor.busy && editor.draft.status.editable,
+                        language: .stored(spellingLanguage), automaticCorrection: automaticCorrection, textColor: NSColor(Brand.text(scheme)))
+                        .frame(height: 22)
+                }.padding(.vertical, 4)
             }.padding(.horizontal, 24).padding(.vertical, 18).zIndex(1)
             Divider()
             if editor.draft.status == .sent {
@@ -127,11 +134,9 @@ struct ComposerView: View {
             } message: { Text("Nur dieser eigene Entwurf wird entfernt. Dateien und Nachrichten auf dem Mailserver bleiben erhalten.") }
     }
     private var bodyEditor: some View {
-        TextEditor(text: field(\.body))
-            .font(.system(size: 14)).scrollContentBackground(.hidden)
+        ComposerBodyEditor(value: field(\.body), enabled: !editor.busy && editor.draft.status.editable,
+            language: .stored(spellingLanguage), automaticCorrection: automaticCorrection, textColor: NSColor(Brand.text(scheme)))
             .padding(20).background(Brand.surface(scheme))
-            .disabled(!editor.draft.status.editable || editor.busy)
-            .accessibilityLabel("Nachrichtentext").accessibilityIdentifier("compose-body")
     }
     private var composerTitle: String {
         if let origin = editor.draft.assistantOrigin { return origin.messageID == nil ? "Nachricht prüfen" : "Antwort prüfen" }
@@ -190,14 +195,6 @@ struct ComposerView: View {
                 }
             }
         }.padding(24)
-    }
-    private func row(_ label: String, field path: WritableKeyPath<LocalDraft, String>, id: String) -> some View {
-        HStack {
-            Text(label).frame(width: 55, alignment: .leading).foregroundStyle(Brand.secondary(scheme))
-            TextField("", text: field(path), prompt: Text(verbatim: label == "Betreff" ? "Betreff" : "E-Mail-Adressen, mit Komma trennen"))
-                .textFieldStyle(.plain).accessibilityLabel(label).accessibilityIdentifier(id)
-                .disabled(editor.busy || !editor.draft.status.editable)
-        }.padding(.vertical, 4)
     }
     private func recipientRow(_ label: String, field path: WritableKeyPath<LocalDraft, String>, id: String) -> some View {
         RecipientEntryView(value: field(path), label: label, identifier: id, history: editor.recipientHistory,

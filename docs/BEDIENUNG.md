@@ -41,6 +41,29 @@ Anhänge werden gezielt über **Vorschau** oder **Sichern …** geladen.
 Empfänger, Betreff, Text und Anhänge prüfen und erst dann **Senden** wählen.
 Das Senden in der nativen App erfolgt mit diesem Klick.
 
+### Empfänger auswählen
+
+Ab dem ersten Buchstaben erscheinen passende bisherige Empfänger, zuerst die
+zuletzt tatsächlich verwendeten. Eine Auswahl setzt nur die Adresse ein.
+Weitere Adressen mit **Semikolon (`;`)** trennen; Kommas werden ebenfalls erkannt.
+Das gilt für **An**, **Cc** und **Bcc**. Leere Abschnitte zwischen Trennzeichen
+werden ignoriert; ungültige Adressen bleiben gesperrt. Das Tippen oder Auswählen
+einer Adresse zählt noch nicht als Versand und verändert die Nutzungsreihenfolge nicht.
+
+### Rechtschreibung einstellen
+
+Unter **Einstellungen → Allgemein → Rechtschreibung** zwischen **Deutsch**,
+**Englisch** und **Automatisch** wählen. Automatisch nutzt die Spracherkennung
+von macOS und ist die Voreinstellung. Auffällige Wörter in Betreff und Nachricht
+werden unterstrichen; ein Rechtsklick zeigt Korrekturvorschläge.
+
+**Tippfehler automatisch korrigieren** lässt sich unabhängig davon abschalten.
+Die Einstellungen bleiben nach einem Neustart erhalten und gelten auch für
+bereits geöffnete Schreibfenster. Ein Sprachwechsel prüft vorhandenen Text erneut,
+ohne ihn umzuschreiben. Empfängeradressen werden nicht automatisch korrigiert.
+
+### Signaturen und Versandstatus
+
 Antworten und Weiterleitungen übernehmen den bereinigten Originalinhalt.
 Unter **Einstellungen → Signaturen** lassen sich eigene HTML-Signaturen und
 ein Standard pro Konto hinterlegen. Die Kontosignatur kann im Entwurf geändert werden.

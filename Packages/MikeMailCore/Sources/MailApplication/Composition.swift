@@ -158,7 +158,10 @@ public enum ComposeValidation {
     public static func addresses(_ value: String) throws -> [String] {
         try header(value)
         if value.trimmingCharacters(in: .whitespaces).isEmpty { return [] }
-        let values = value.split(whereSeparator: { $0 == "," || $0 == ";" }).map { $0.trimmingCharacters(in: .whitespaces) }
+        // A separator followed by a space used to survive split() as an empty
+        // mailbox after trimming. Accept that legacy autocomplete suffix too.
+        let values = value.split(whereSeparator: { $0 == "," || $0 == ";" })
+            .map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
         guard values.count <= 100 else { throw ComposeFailure.tooLarge }
         var seen = Set<String>()
         return try values.filter { try address($0); return seen.insert($0.lowercased()).inserted }

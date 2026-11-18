@@ -12,6 +12,8 @@ enum AppAppearance: String, CaseIterable, Identifiable {
 struct SettingsView: View {
     @Bindable var model: InboxModel
     @AppStorage("appearance") private var appearance = AppAppearance.system.rawValue
+    @AppStorage(ComposerSpellingLanguage.preferenceKey) private var spellingLanguage = ComposerSpellingLanguage.automatic.rawValue
+    @AppStorage(ComposerSpellingLanguage.correctionKey) private var automaticCorrection = true
     @Environment(\.colorScheme) private var scheme
     @ViewState private var editingAccount: MailAccount?
     @ViewState private var confirmation: StorageConfirmation?
@@ -22,7 +24,7 @@ struct SettingsView: View {
     @ViewState private var smtpAccount: MailAccount?
     var body: some View {
         TabView {
-            general.tabItem { Label("Darstellung", systemImage: "paintpalette") }
+            general.tabItem { Label("Allgemein", systemImage: "slider.horizontal.3") }
             SignatureSettingsView(model: model).tabItem { Label("Signaturen", systemImage: "signature") }
             contentSearch.tabItem { Label("Inhaltssuche", systemImage: "text.magnifyingglass") }
             accounts.tabItem { Label("Konten", systemImage: "person.crop.circle") }
@@ -95,15 +97,23 @@ struct SettingsView: View {
     private var general: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text("Ein ruhiger Arbeitsplatz.").font(Brand.headline(27))
-            Text("Wähle, wie CuMail auf deinem Mac aussieht.").font(.system(size: 13)).foregroundStyle(.secondary)
+            Text("Aussehen und Schreiben, wie es zu dir passt.").font(.system(size: 13)).foregroundStyle(.secondary)
             Picker("Erscheinungsbild", selection: $appearance) {
                 ForEach(AppAppearance.allCases) { Text($0.rawValue).tag($0.rawValue) }
             }.pickerStyle(.segmented).accessibilityIdentifier("appearance-picker")
             Divider()
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Rechtschreibung").font(.system(size: 15, weight: .semibold))
+                Picker("Sprache", selection: $spellingLanguage) {
+                    ForEach(ComposerSpellingLanguage.allCases) { Text($0.title).tag($0.rawValue) }
+                }.accessibilityIdentifier("compose-spelling-language")
+                Toggle("Tippfehler automatisch korrigieren", isOn: $automaticCorrection)
+                    .accessibilityIdentifier("compose-spelling-correction")
+                Text("Gilt für Betreff und Nachrichtentext. Auffällige Wörter werden unterstrichen; per Rechtsklick wählst du einen Vorschlag. «Automatisch» nutzt die Spracherkennung von macOS.")
+                    .font(.system(size: 12)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
             Label("Die Systemeinstellungen für Kontrast und Bedienung bleiben wirksam.", systemImage: "accessibility")
-                .font(.system(size: 12)).foregroundStyle(.secondary)
-            Label("Native Bedienelemente passen sich deinem Mac an.", systemImage: "hand.raised")
-                .font(.system(size: 12)).foregroundStyle(.secondary)
+                .font(.system(size: 11)).foregroundStyle(.secondary)
             Spacer()
         }.padding(24)
     }

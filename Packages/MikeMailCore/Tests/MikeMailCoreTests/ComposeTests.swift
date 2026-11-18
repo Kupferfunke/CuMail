@@ -6,6 +6,23 @@ import MailDemo
 import MailRendering
 
 struct ComposeTests {
+    @Test func recipientSeparatorsAndLegacyAutocompleteSuffixesAreSafe() throws {
+        for separator in [",", ";"] {
+            for suffix in ["", separator, separator + " ", separator + "   "] {
+                #expect(try ComposeValidation.addresses("one@example.invalid" + suffix) == ["one@example.invalid"])
+                #expect(try ComposeValidation.addresses("one@example.invalid\(separator) two@example.invalid" + suffix) == ["one@example.invalid", "two@example.invalid"])
+            }
+        }
+        #expect(try ComposeValidation.addresses("one@example.invalid; , ONE@example.invalid, two@example.invalid; ") == ["one@example.invalid", "two@example.invalid"])
+        var draft = LocalDraft(accountID: try AccountID(), sender: "sender@example.invalid")
+        draft.to = "one@example.invalid, "; draft.cc = "copy@example.invalid; "; draft.bcc = "blind@example.invalid, "
+        try draft.validateSubmission()
+        draft.to = ", ; "; draft.cc = ""; draft.bcc = ""
+        #expect(throws: ComposeFailure.missingRecipients) { try draft.validateSubmission() }
+        for malformed in ["good@example.invalid; bad@; ", "good@example.invalid; missing-domain; ", "good@example.invalid, \r\n"] {
+            #expect(throws: (any Error).self) { try ComposeValidation.addresses(malformed) }
+        }
+    }
     @Test(arguments: [ComposeKind.reply, .replyAll, .forward])
     func htmlOriginalRemainsSeparateFromAnswerAndSignature(kind: ComposeKind) throws {
         let source = try SyntheticFixtures.make().snapshot.messages[0]

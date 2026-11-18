@@ -62,6 +62,8 @@ struct RecipientHistoryTests {
         draft.status = .accepted; draft = try await repo.saveDraft(draft, expectedRevision: draft.revision)
         draft.status = .sent; draft.purgeContent(); draft = try await repo.saveDraft(draft, expectedRevision: draft.revision)
         let history = try await repo.recipientHistory()
+        // A recipient used just once today precedes the historical frequent one.
+        #expect(history.prefix(3).allSatisfy { ["new@example.invalid", "copy@example.invalid", "blind@example.invalid"].contains($0.address) })
         #expect(history.filter { ["new@example.invalid", "copy@example.invalid", "blind@example.invalid"].contains($0.address) }.count == 3)
         #expect(history.first { $0.address == "new@example.invalid" }?.useCount == 1)
         #expect(draft.to.isEmpty && draft.bcc.isEmpty)

@@ -19,7 +19,7 @@ struct RecipientCompletionContext: Equatable {
     }
     func inserting(_ address: String) -> (value: String, caret: NSRange) {
         let text = value as NSString
-        let replacement = (range.location == 0 ? "" : " ") + address + (NSMaxRange(range) == text.length ? ", " : "")
+        let replacement = (range.location == 0 ? "" : " ") + address
         return (text.replacingCharacters(in: range, with: replacement), NSRange(location: range.location + (replacement as NSString).length, length: 0))
     }
     func suggestions(from history: [UsedRecipient], excluding otherFields: Set<String>) -> [UsedRecipient] {
@@ -32,8 +32,8 @@ struct RecipientCompletionContext: Equatable {
             !used.contains(recipient.address.lowercased()) &&
             (folded(recipient.address).hasPrefix(query) || folded(recipient.name).hasPrefix(query) || recipient.name.split(separator: " ").contains { folded(String($0)).hasPrefix(query) })
         }.sorted {
-            if $0.useCount != $1.useCount { return $0.useCount > $1.useCount }
             if $0.lastUsed != $1.lastUsed { return $0.lastUsed > $1.lastUsed }
+            if $0.useCount != $1.useCount { return $0.useCount > $1.useCount }
             return $0.address < $1.address
         }
     }
@@ -73,7 +73,7 @@ struct RecipientEntryView: View {
     }
     private var suggestionsView: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Bisherige Empfänger").font(.system(size: 10, weight: .semibold)).foregroundStyle(Brand.secondary(scheme)).padding(.horizontal, 12).padding(.vertical, 8)
+            Text("Zuletzt verwendet").font(.system(size: 10, weight: .semibold)).foregroundStyle(Brand.secondary(scheme)).padding(.horizontal, 12).padding(.vertical, 8)
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 0) {
@@ -139,7 +139,7 @@ struct RecipientTextField: NSViewRepresentable {
     func makeNSView(context: Context) -> NSTextField {
         let field = NSTextField()
         field.isBordered = false; field.drawsBackground = false; field.focusRingType = .none
-        field.font = .systemFont(ofSize: 13); field.placeholderString = "E-Mail-Adressen, mit Komma trennen"
+        field.font = .systemFont(ofSize: 13); field.placeholderString = "Weitere Adressen mit ; trennen"
         field.setAccessibilityIdentifier(identifier); field.setAccessibilityLabel(label)
         field.delegate = context.coordinator; field.lineBreakMode = .byClipping
         field.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -164,6 +164,13 @@ struct RecipientTextField: NSViewRepresentable {
         func controlTextDidBeginEditing(_ notification: Notification) {
             parent.focusChanged(true)
             guard let field = notification.object as? NSTextField, let editor = field.currentEditor() as? NSTextView else { return }
+            // Addresses must never be changed by the prose editor's spelling or
+            // substitution settings when AppKit reuses a window field editor.
+            editor.isContinuousSpellCheckingEnabled = false
+            editor.isAutomaticSpellingCorrectionEnabled = false
+            editor.isAutomaticTextReplacementEnabled = false
+            editor.isAutomaticQuoteSubstitutionEnabled = false
+            editor.isAutomaticDashSubstitutionEnabled = false
             parent.selectionChanged(editor.selectedRange())
             NotificationCenter.default.removeObserver(self, name: NSTextView.didChangeSelectionNotification, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(selectionChanged(_:)), name: NSTextView.didChangeSelectionNotification, object: editor)

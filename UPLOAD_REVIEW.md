@@ -1,14 +1,16 @@
-# Vorbereitung für GitHub
+# Prüfung der öffentlichen Quellcodefassung
 
-Stand: 17. November 2026. Geplanter Zugriff: **öffentliches Repository**,
-mit kostenloser privater Nutzung unter der CuMail Personal Use License 1.0.
-Dieser Bericht bestätigt noch keinen erfolgreichen GitHub-Upload.
+Stand: 18. November 2026. Quellstand **0.26.0 (Build 46)** für das öffentliche
+Repository [Kupferfunke/CuMail](https://github.com/Kupferfunke/CuMail), mit
+kostenloser privater Nutzung unter der CuMail Personal Use License 1.0.
 
 ## Enthalten
 
-Quellcode der macOS-App 0.25.2 (Build 45), Kernpaket, Services,
+Quellcode der macOS-App, Kernpaket, Services,
 synthetische Tests, Markenressourcen, Paket-Lockdateien, Buildskripte und
-Drittanbieterlizenzen. Ein neuer Git-Start übernimmt keine früheren Git-Objekte.
+Drittanbieterlizenzen. Die erste Veröffentlichung übernahm keine früheren
+privaten Git-Objekte. Das Update ergänzt die Empfänger- und Rechtschreibfunktionen
+sowie öffentliche Versionshinweise und Bedienungsdokumentation.
 
 ## Entfernt oder ausgeschlossen
 
@@ -21,7 +23,7 @@ Drittanbieterlizenzen. Ein neuer Git-Start übernimmt keine früheren Git-Objekt
 - Buildprodukte, Caches, Mail-/Datenbankdateien, Archive, lokale Einstellungen
   und mögliche Schlüsseldateien.
 
-## Durchgeführte Prüfungen
+## Prüfungen der ersten Veröffentlichung
 
 - Inhaltsprüfung auf bekannte Tokenformate, private Schlüssel, feste
   Geheimniszuweisungen, persönliche Kontaktdaten, lokale Benutzerpfade und
@@ -36,13 +38,30 @@ Drittanbieterlizenzen. Ein neuer Git-Start übernimmt keine früheren Git-Objekt
   ohne Geheimnisfund. Ausgabe und Berichte sind geschwärzt; keine pauschalen
   Ausnahmen für Testverzeichnisse.
 
+## Zusätzliche Prüfungen für 0.26.0
+
+- Gezielter Abgleich der neuen Quelldateien und Tests mit dem Entwicklungsstand.
+  Die öffentliche Google-Konfiguration, anonymisierte Testsignatur und bisherigen
+  Ausschlüsse wurden beibehalten.
+- Prüfung der Änderungen auf persönliche Angaben und der gesamten bereinigten
+  Fassung mit Gitleaks 8.30.1, ohne Geheimnisfund.
+- Swift-Syntaxprüfung der neuen und geänderten Swift-Dateien sowie Prüfung von
+  App-Plist, Xcode-Projekt und Dokumentationslinks.
+- Vier isolierte Prüfungen der Google-Buildkonfiguration, einschliesslich der
+  Versionswerte 0.26.0 / 46 und des Schutzes der gemeinsamen Vorlage.
+- Vorhandene Entwicklungsprotokolle geprüft: 74 App-Tests erfolgreich;
+  227 Kernprüfungen erfasst, davon zwei optionale Prüfungen ausgelassen und
+  225 erfolgreich. Das Release-Buildprotokoll meldet einen erfolgreichen Build.
+  Die internen Protokolle selbst werden nicht veröffentlicht.
+
 Keine echten Zugangsdaten in der bereinigten Kopie gefunden. Synthetische
 Testkennwörter und Testtokens bleiben erhalten, damit die Tests aussagekräftig sind.
 
 ## Prüfgrenzen
 
-Ein vollständiger App-Build und die gesamte Testsuite wurden in dieser Sitzung
-nicht ausgeführt. Die vorbereiteten Commit-/Push-Hooks verlangen Gitleaks
+Ein vollständiger App-Build und die gesamte Testsuite wurden für den öffentlichen
+Export nicht nochmals ausgeführt; die oben genannten Gesamtergebnisse stammen
+aus den vorhandenen Entwicklungsprotokollen. Die Commit-/Push-Hooks verlangen Gitleaks
 und brechen ohne verfügbaren Scanner ab.
 
 Die Prüfung kann unbekannte Geheimnisformate oder Sicherheitslücken in der

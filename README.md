@@ -12,13 +12,25 @@ eine separate Erlaubnis. Der Quellcode ist öffentlich einsehbar; es gilt die
 
 - [Bedienungsanleitung](docs/BEDIENUNG.md): Postfächer, Suche, Versand, Signaturen und KI-Zugang.
 - [Architektur](docs/ARCHITEKTUR.md): Komponenten, Datenhaltung und Schnittstellen.
+- [Versionshinweise](CHANGELOG.md): neue Funktionen und Fehlerbehebungen.
 - [Sicherheitshinweise](SECURITY.md) und [Prüfbericht](UPLOAD_REVIEW.md).
 - [Drittanbieterlizenzen](THIRD_PARTY_NOTICES.md).
 
-Quellstand: **0.25.2, Build 45**. Dieses Repository ist eine bereinigte
+Quellstand: **0.26.0, Build 46**. Dieses Repository ist eine bereinigte
 Quellcodekopie. Es enthält keine eingerichteten Konten, privaten Mailbestände,
 Zugangsschlüssel, lokalen Signierzertifikate oder bisherigen Git-Objekte.
 Die Tests verwenden synthetische Postfächer und ausdrücklich erfundene Werte.
+
+## Neu in 0.26.0
+
+- Rechtschreibprüfung in Betreff und Nachrichtentext: Deutsch, Englisch oder
+  automatische Spracherkennung, mit separat abschaltbarer Autokorrektur.
+- Empfängervorschläge nach letzter tatsächlicher Verwendung.
+- Zuverlässige Empfängerauswahl und Unterstützung mehrerer Adressen mit Semikolon;
+  ältere Entwürfe mit angehängtem Komma und Leerzeichen sind wieder versendbar.
+
+Dieses Release enthält den Quellcode; eine fertige, notarisierte macOS-Installationsdatei
+wird nicht mitgeliefert. Die Build-Anleitung folgt unten.
 
 ## Voraussetzungen und Build
 

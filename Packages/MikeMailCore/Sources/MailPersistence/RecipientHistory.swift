@@ -40,7 +40,7 @@ extension EncryptedMailRepository: RecipientHistoryRepository {
                               WHERE n.address=u.address AND n.name<>'' AND a.is_deleting=0
                               ORDER BY n.sent_at DESC,n.name LIMIT 1),'') AS name
                 FROM recipient_usage u JOIN accounts a ON a.id=u.account_id WHERE a.is_deleting=0
-                GROUP BY u.address ORDER BY uses DESC,last_used DESC,u.address
+                GROUP BY u.address ORDER BY last_used DESC,uses DESC,u.address
                 """).compactMap { row in
                     let address: String = row["address"], name: String = row["name"]
                     guard (try? ComposeValidation.address(address)) != nil else { return nil }

@@ -3,6 +3,12 @@
 CuMail verbindet eine native SwiftUI/AppKit-Oberfläche mit getrennten
 Komponenten für Mailanbieter, Speicherung, HTML-Darstellung und MCP-Zugriff.
 
+Betreff und Nachrichtentext verwenden native AppKit-Editoren mit getrennten
+Rechtschreib- und Undo-Zuständen. Die Sprachwahl und Autokorrektur sind
+App-Einstellungen; Empfängerfelder bleiben von Textkorrekturen ausgeschlossen.
+Empfängervorschläge stammen aus dem verschlüsselten lokalen Verlauf und werden
+nach letzter tatsächlicher Verwendung sortiert.
+
 | Komponente | Aufgabe |
 |---|---|
 | `MailDomain` | Konten, Nachrichten, Ordner, Kennungen und Speicherregeln |
